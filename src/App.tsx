@@ -1,28 +1,33 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import PasteUrlForm, { FormValues } from './components/PasteUrlForm'
+import { Container } from 'reactstrap'
+import { getImageDataUrl } from './utils/unsplash'
+import ImageSandbox from './components/ImageSandbox'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+interface Props {}
+
+const App: React.SFC<Props> = () => {
+  const [formValues, storeFormValues] = useState<FormValues>({
+    url: 'https://unsplash.com/photos/-mUBrTfsu0A'
+    // https://unsplash.com/photos/krY-4Yjqo8c    beach rocks
+    // https://unsplash.com/photos/-mUBrTfsu0A    train tracks
+  })
+  const [imageUrl, setImageUrl] = useState('')
+
+  useEffect(() => {
+    getImageDataUrl(formValues.url)
+      .then(setImageUrl)
+      .catch(_ => {})
+  }, [formValues.url])
+
+  return (
+    <main style={{ padding: '3rem 0' }}>
+      <Container>
+        <PasteUrlForm onSubmit={storeFormValues} />
+      </Container>
+      {imageUrl && <ImageSandbox imageUrl={imageUrl} />}
+    </main>
+  )
 }
 
-export default App;
+export default App
